@@ -1,0 +1,483 @@
+Build a new trading-focused layout for my existing Next.js + TypeScript project.
+
+IMPORTANT:
+
+* Use TypeScript/JavaScript only.
+* Do NOT use Python.
+* Do NOT create Python files.
+* Do NOT require Python.
+* Use my existing Next.js/npm environment.
+* Do not implement real-money trade execution yet.
+
+## MAIN PURPOSE
+
+This application is being built as a real-time SMC (Smart Money Concepts) market-analysis system using live Deriv market data.
+
+The dashboard should NOT feel like a generic admin dashboard.
+
+It should feel like a professional trading terminal focused on:
+
+* Market structure
+* Liquidity
+* BOS
+* CHoCH
+* Fair Value Gaps
+* Order Blocks
+* HTF bias
+* Entry confirmations
+* Risk/reward
+* LONG / SHORT / NO TRADE decisions
+
+The current phase is market-data infrastructure, but the UI should be designed so the future SMC engine can plug into it naturally.
+
+---
+
+# PAGE STRUCTURE
+
+Create:
+
+/dashboard
+
+The dashboard should contain the following major areas.
+
+## 1. TOP HEADER
+
+Create a compact trading-terminal header.
+
+Left:
+
+* Application name: "SMC Terminal"
+* Small status indicator
+* "LIVE" when connected
+* "OFFLINE" when disconnected
+
+Center/right:
+
+* Current selected symbol
+* Current price
+* Price change
+* Last tick time
+
+Right side:
+
+* Connection status
+* Settings icon/button
+
+Keep the header compact.
+
+Do not waste vertical space.
+
+---
+
+# 2. SYMBOL WATCHLIST
+
+Create a left-side watchlist.
+
+Symbols:
+
+EURUSD
+GBPUSD
+USDJPY
+AUDUSD
+V75
+V10
+BOOM1000
+CRASH1000
+
+Each row should show:
+
+* Symbol
+* Current price
+* Direction indicator
+* Last update
+* Connection/tick status
+
+Clicking a symbol should make it the active chart/analysis symbol.
+
+The selected symbol should be visually obvious.
+
+---
+
+# 3. MAIN CHART AREA
+
+The center of the dashboard should be dominated by the market chart.
+
+Create a large candlestick chart area.
+
+Initially display the 1-minute candles.
+
+Add timeframe controls:
+
+1M
+5M
+
+The chart must eventually support overlays for:
+
+* Swing highs
+* Swing lows
+* BOS
+* CHoCH
+* Liquidity
+* FVG
+* Order Blocks
+
+For the first implementation, only render real 1M and 5M OHLC candle data received from the Deriv WebSocket.
+
+DO NOT generate fake candles.
+
+If a charting library is required, choose a lightweight library that works well with Next.js and TypeScript.
+
+---
+
+# 4. MARKET STRUCTURE PANEL
+
+Create a panel beside or underneath the chart.
+
+Title:
+
+"MARKET STRUCTURE"
+
+Show:
+
+HTF Bias:
+WAITING
+
+Structure:
+WAITING
+
+Last BOS:
+—
+
+Last CHoCH:
+—
+
+Swing High:
+—
+
+Swing Low:
+—
+
+For now these values can display WAITING because the SMC engine has not been implemented.
+
+Do NOT invent signals.
+
+The UI must be designed so the real analysis engine can populate these values later.
+
+---
+
+# 5. SMC ANALYSIS PANEL
+
+Create a dedicated panel called:
+
+"SMC ANALYSIS"
+
+Sections:
+
+Liquidity
+
+* Buy-side liquidity
+* Sell-side liquidity
+* Equal highs
+* Equal lows
+
+Imbalance
+
+* Bullish FVG
+* Bearish FVG
+
+Order Blocks
+
+* Bullish OB
+* Bearish OB
+
+Premium / Discount
+
+* Current zone
+
+Initially show:
+
+WAITING FOR DATA
+
+Do not fabricate analysis.
+
+---
+
+# 6. SIGNAL PANEL
+
+Create a prominent section called:
+
+"TRADE SIGNAL"
+
+Display one of:
+
+NO TRADE
+LONG
+SHORT
+
+Initially:
+
+NO TRADE
+
+Below it display:
+
+Confidence:
+—
+
+Setup:
+—
+
+Entry:
+—
+
+Stop Loss:
+—
+
+Take Profit:
+—
+
+Risk/Reward:
+—
+
+Reason:
+Waiting for market structure confirmation
+
+IMPORTANT:
+
+Do not generate actual trading signals yet.
+
+The signal engine will be implemented later.
+
+---
+
+# 7. MARKET DATA PANEL
+
+Create a compact technical panel showing the live data connection.
+
+Display:
+
+Connection:
+CONNECTED / DISCONNECTED
+
+WebSocket:
+ACTIVE / INACTIVE
+
+Ticks received:
+[number]
+
+Last tick:
+[timestamp]
+
+1M candles:
+[number]
+
+5M candles:
+[number]
+
+Subscription:
+ACTIVE / INACTIVE
+
+This should use actual WebSocket state.
+
+---
+
+# 8. LIVE EVENT LOG
+
+Add a small terminal-style event log.
+
+Example events:
+
+[15:02:14] WebSocket connected
+[15:02:15] EURUSD subscription active
+[15:02:15] Tick received
+[15:03:00] 1M candle closed
+[15:05:00] 5M candle closed
+
+Only show real events.
+
+Keep the log scrollable and compact.
+
+---
+
+# 9. RISK PANEL
+
+Add a future-ready section:
+
+"RISK MANAGEMENT"
+
+Display:
+
+Account Balance:
+—
+
+Risk:
+—
+
+Position Size:
+—
+
+Potential Loss:
+—
+
+Potential Profit:
+—
+
+Risk/Reward:
+—
+
+For now these should remain inactive/placeholders.
+
+DO NOT connect this to real-money trading.
+
+---
+
+# VISUAL STYLE
+
+Use a professional dark trading-terminal aesthetic.
+
+Requirements:
+
+* Dark background
+* High contrast text
+* Subtle borders
+* Compact spacing
+* Minimal rounded cards
+* Avoid excessive gradients
+* Avoid oversized headings
+* Avoid unnecessary animations
+* Avoid generic SaaS/dashboard styling
+
+The interface should feel closer to a professional trading platform than a business admin dashboard.
+
+Use clear visual hierarchy.
+
+Colors should communicate meaning:
+
+* Green = bullish / LONG
+* Red = bearish / SHORT
+* Neutral gray = waiting/no trade
+* Yellow/orange = warning or pending confirmation
+
+Do not overuse colors.
+
+---
+
+# RESPONSIVE DESIGN
+
+Desktop is the primary target because this will be used as a trading workstation.
+
+Still make the interface usable on smaller screens.
+
+Desktop layout should roughly be:
+
+---
+
+## | HEADER                                                |
+
+| WATCHLIST |             CHART              | ANALYSIS |
+|           |                                |          |
+|           |                                |          |
+|           |                                |          |
+---------------------------------------------------------
+
+## | WATCHLIST | MARKET STRUCTURE | SIGNAL | RISK         |
+
+## |                 EVENT / SYSTEM LOG                   |
+
+The chart should receive the largest amount of screen space.
+
+---
+
+# DATA ARCHITECTURE
+
+Keep the UI separate from the market-data logic.
+
+Use:
+
+lib/
+deriv/
+websocket.ts
+candles.ts
+symbols.ts
+
+analysis/
+market-structure.ts
+liquidity.ts
+fvg.ts
+order-blocks.ts
+smc.ts
+
+signals/
+signal-engine.ts
+
+The UI should consume structured market state rather than directly implementing trading calculations.
+
+---
+
+# FIRST IMPLEMENTATION PHASE
+
+For this task, implement:
+
+1. The complete dashboard layout.
+2. Deriv WebSocket connection.
+3. Live tick streaming.
+4. Symbol subscriptions.
+5. 1-minute candle construction.
+6. 5-minute candle construction.
+7. Connection monitoring.
+8. Live prices.
+9. Watchlist.
+10. Candlestick chart.
+11. Event log.
+12. Market-data status panel.
+
+Do NOT implement:
+
+* Automatic trading
+* Real-money orders
+* Broker execution
+* SMC signals
+* AI-generated trading decisions
+* Fake market data
+
+The SMC panels should be UI placeholders ready for the analysis engine.
+
+---
+
+# QUALITY REQUIREMENTS
+
+Use strict TypeScript.
+
+Keep components modular.
+
+Do not put the entire application into one file.
+
+Do not duplicate WebSocket connections unnecessarily.
+
+Prevent duplicate subscriptions.
+
+Handle reconnects properly.
+
+Do not expose private API credentials to client-side code.
+
+Use environment variables.
+
+After implementation:
+
+1. Run npm build.
+2. Fix all TypeScript errors.
+3. Verify the dashboard renders.
+4. Verify live Deriv ticks.
+5. Verify 1M candles.
+6. Verify 5M candles.
+7. Verify switching symbols.
+8. Verify WebSocket reconnection.
+9. Verify no fake market data is being displayed.
+10. Show me the final project structure and explain how each part works.
+
+IMPORTANT:
+
+This is the FOUNDATION of a future SMC trading system.
+
+Do not make assumptions about my SMC strategy.
+
+Build the infrastructure cleanly so I can define the exact SMC rules in the next phase.

@@ -1,0 +1,30 @@
+{
+  "name": "uche-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "npx tsx test/market-structure.test.ts && npx tsx test/structure-breaks.test.ts",
+    "test:all": "npx tsx --test \"test/*.test.ts\"",
+    "test:real": "npx tsx test/verify-real-deriv-data.ts",
+    "compare:brokers": "npx tsx test/compare-broker-candles.ts",
+    "monitor:live": "npx tsx test/monitoring-live-diagnostic.ts"
+  },
+  "dependencies": {
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/ws": "^8.5.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.0",
+    "ws": "^8.18.0"
+  }
+}
