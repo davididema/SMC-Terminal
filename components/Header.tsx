@@ -12,6 +12,12 @@ interface HeaderProps {
   lastTickEpoch: number | null;
   feedState: FeedState;
   onReconnect: () => void;
+  /** Optional notification count for responsive notification bell */
+  notificationCount?: number;
+  /** Toggle notification drawer/overlay */
+  onToggleNotifications?: () => void;
+  /** Whether the notification drawer is currently open */
+  isNotificationOpen?: boolean;
 }
 
 export function Header({
@@ -21,6 +27,9 @@ export function Header({
   lastTickEpoch,
   feedState,
   onReconnect,
+  notificationCount = 0,
+  onToggleNotifications,
+  isNotificationOpen = false,
 }: HeaderProps) {
   const isOnline = status === 'CONNECTED';
   const isConnecting = status === 'CONNECTING' || status === 'RECONNECTING';
@@ -32,42 +41,41 @@ export function Header({
   };
 
   return (
-    <header className="terminal-header">
+    <header className="terminal-header" role="banner">
       <div className="header-left">
         <div className="brand-badge">
-          <div className="brand-logo-icon">SMC</div>
-          <span>SMC TERMINAL</span>
+          <div className="brand-logo-icon" aria-hidden="true">SMC</div>
+          <span className="brand-title">SMC TERMINAL</span>
         </div>
 
         <div
           className={`live-badge ${
             isOnline ? 'online' : isConnecting ? 'connecting' : 'offline'
           }`}
+          title={`Connection: ${status}`}
         >
-          <span className={`live-indicator-dot ${isOnline ? 'pulse' : ''}`} />
-          <span>{isOnline ? 'LIVE' : isConnecting ? 'CONNECTING' : 'OFFLINE'}</span>
+          <span className={`live-indicator-dot ${isOnline ? 'pulse' : ''}`} aria-hidden="true" />
+          <span className="live-status-text">{isOnline ? 'LIVE' : isConnecting ? 'CONNECTING' : 'OFFLINE'}</span>
         </div>
       </div>
 
       <div className="header-center">
         <div className="header-symbol-highlight">
-          {selectedSymbol.id}{' '}
-          <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
+          <span className="header-symbol-id">{selectedSymbol.id}</span>{' '}
+          <span className="header-symbol-name">
             ({selectedSymbol.displayName})
           </span>
         </div>
 
-        <div className="header-price-highlight mono" style={{ color: '#fff' }}>
+        <div className="header-price-highlight mono">
           {currentPrice !== null ? (
             <span>
               {currentPrice.toFixed(selectedSymbol.pipSize)}
               {feedState !== 'LIVE' && (
                 <span
+                  className="header-feed-note"
                   title="Last received price — the symbol feed is not live"
                   style={{
-                    fontSize: '10px',
-                    fontWeight: 600,
-                    marginLeft: '6px',
                     color: feedState === 'STALE' ? '#f59e0b' : '#94a3b8',
                   }}
                 >
@@ -87,7 +95,7 @@ export function Header({
 
       <div className="header-right">
         <div
-          className="mono"
+          className="mono header-ws-status"
           style={{
             fontSize: '11px',
             color: isOnline ? '#10b981' : isConnecting ? '#f59e0b' : '#f43f5e',
@@ -97,7 +105,12 @@ export function Header({
           WS: {status}
         </div>
 
-        <button className="header-btn" onClick={onReconnect} title="Force Reconnect">
+        <button
+          className="header-btn header-reconnect-btn"
+          onClick={onReconnect}
+          title="Force Reconnect"
+          aria-label="Force Reconnect"
+        >
           <svg
             width="12"
             height="12"
@@ -107,11 +120,45 @@ export function Header({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
+            aria-hidden="true"
           >
             <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
           </svg>
-          <span>RECONNECT</span>
+          <span className="header-btn-text">RECONNECT</span>
         </button>
+
+        {/* NOTIFICATION BELL ICON BUTTON */}
+        {onToggleNotifications && (
+          <button
+            type="button"
+            id="btn-toggle-notifications"
+            className={`header-btn notification-bell-btn ${isNotificationOpen ? 'active' : ''}`}
+            onClick={onToggleNotifications}
+            title={notificationCount > 0 ? `${notificationCount} new signals` : 'Notifications'}
+            aria-label={`Notifications${notificationCount > 0 ? ` (${notificationCount} unread)` : ''}`}
+            aria-expanded={isNotificationOpen}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            {notificationCount > 0 && (
+              <span className="notification-badge-count" aria-hidden="true">
+                {notificationCount > 99 ? '99+' : notificationCount}
+              </span>
+            )}
+          </button>
+        )}
       </div>
     </header>
   );

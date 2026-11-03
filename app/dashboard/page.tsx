@@ -58,8 +58,15 @@ import { SignalPanel } from '@/components/SignalPanel';
 import { MarketDataPanel } from '@/components/MarketDataPanel';
 import { RiskPanel } from '@/components/RiskPanel';
 import { EventLogPanel } from '@/components/EventLogPanel';
+import { MobileBottomNav, type MobileTab } from '@/components/MobileBottomNav';
+import { MobileMarketHeader } from '@/components/MobileMarketHeader';
 
 export default function DashboardPage() {
+  // Mobile navigation destination (Option 1B: Overview, Chart, Analysis, Events)
+  const [mobileTab, setMobileTab] = useState<MobileTab>('overview');
+  // Notification drawer overlay state
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
   // Active selected symbol (defaults to EURUSD)
   const [selectedSymbol, setSelectedSymbol] = useState<DerivSymbolConfig>(
     SUPPORTED_SYMBOLS[0]
@@ -724,10 +731,24 @@ export default function DashboardPage() {
         lastTickEpoch={lastTickEpoch}
         feedState={currentFeedState}
         onReconnect={handleReconnect}
+        notificationCount={notifications.length}
+        onToggleNotifications={() => setIsNotificationOpen((prev) => !prev)}
+        isNotificationOpen={isNotificationOpen}
+      />
+
+      {/* MOBILE MARKET HEADER (visible on mobile only) */}
+      <MobileMarketHeader
+        selectedSymbol={selectedSymbol}
+        onSelectSymbol={handleSelectSymbol}
+        currentPrice={currentPrice}
+        lastTickEpoch={lastTickEpoch}
+        feedState={currentFeedState}
+        timeframe={timeframe}
+        structuralBias={decision.analysis?.marketStructure?.structuralBias ?? null}
       />
 
       {/* DASHBOARD WORKSPACE GRID */}
-      <main className="dashboard-grid">
+      <main className="dashboard-grid" data-mobile-tab={mobileTab}>
         {/* 2. SYMBOL WATCHLIST (LEFT) */}
         <Watchlist
           selectedSymbolId={selectedSymbol.id}
@@ -798,7 +819,15 @@ export default function DashboardPage() {
         <EventLogPanel logs={logs} onClearLogs={handleClearLogs} />
       </main>
 
-      {/* PHASE 1: NEW-SIGNAL NOTIFICATIONS (fixed overlay, preserves layout) */}
+      {/* MOBILE BOTTOM NAVIGATION (visible on mobile only) */}
+      <MobileBottomNav
+        activeTab={mobileTab}
+        onTabChange={setMobileTab}
+        unreadNotifications={notifications.length}
+        hasActiveSignal={decision.signal?.decision === 'LONG' || decision.signal?.decision === 'SHORT'}
+      />
+
+      {/* NEW-SIGNAL NOTIFICATIONS (drawer overlay, preserves layout) */}
       <NotificationCenter
         notifications={notifications}
         onDismiss={dismissNotification}
@@ -810,6 +839,8 @@ export default function DashboardPage() {
         onToggleSound={setSoundEnabled}
         storageAvailable={storageAvailable}
         onSendTestNotification={notificationTestEnabled ? sendTestNotification : undefined}
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
       />
     </div>
   );

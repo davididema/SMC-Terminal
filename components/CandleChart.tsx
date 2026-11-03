@@ -53,12 +53,12 @@ export function CandleChart({
   const [hoveredCandle, setHoveredCandle] = useState<Candle | null>(null);
   const [crosshairPos, setCrosshairPos] = useState<{ x: number; y: number } | null>(null);
 
-  // Zoom / pan viewport (which slice of the candle history is visible) and the
-  // independent vertical price zoom factor.
+  // Independent vertical price zoom factor and responsive resize trigger
   const [viewport, setViewport] = useState<ChartViewport>(() =>
     createViewport(0, DEFAULT_VISIBLE_CANDLES)
   );
   const [priceScale, setPriceScale] = useState(DEFAULT_PRICE_SCALE);
+  const [resizeCount, setResizeCount] = useState(0);
 
   // Latest history length, mirrored into a ref so event listeners registered
   // once (wheel, pointer) always read the current total without re-binding.
@@ -140,6 +140,28 @@ export function CandleChart({
 
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
+  // Responsive resize observer to re-measure and redraw on mobile/desktop viewport changes
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onResize = () => {
+      setResizeCount((c) => c + 1);
+    };
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(onResize);
+      ro.observe(el);
+    }
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', onResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -442,6 +464,7 @@ export function CandleChart({
     crosshairPos,
     swingsMap,
     breaksMap,
+    resizeCount,
   ]);
 
   // Handle Mouse Hover for Crosshair and Tooltip
