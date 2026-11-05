@@ -86,7 +86,7 @@ export function SignalPanel({
       : '#94a3b8';
 
   return (
-    <div className="panel">
+    <div className="panel signal-panel">
       <div className="panel-header">
         <div className="panel-title">
           <svg

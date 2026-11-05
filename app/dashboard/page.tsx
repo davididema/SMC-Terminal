@@ -60,6 +60,7 @@ import { RiskPanel } from '@/components/RiskPanel';
 import { EventLogPanel } from '@/components/EventLogPanel';
 import { MobileBottomNav, type MobileTab } from '@/components/MobileBottomNav';
 import { MobileMarketHeader } from '@/components/MobileMarketHeader';
+import { MobileSignalCard } from '@/components/MobileSignalCard';
 
 export default function DashboardPage() {
   // Mobile navigation destination (Option 1B: Overview, Chart, Analysis, Events)
@@ -749,6 +750,25 @@ export default function DashboardPage() {
 
       {/* DASHBOARD WORKSPACE GRID */}
       <main className="dashboard-grid" data-mobile-tab={mobileTab}>
+        <MobileSignalCard
+          signal={decision.signal}
+          lastGeneratedSignal={lastGeneratedSignal}
+          symbolId={selectedSymbol.id}
+          displayName={selectedSymbol.displayName}
+          timeframe={timeframe}
+          marketBias={decision.analysis?.marketStructure?.structuralBias ?? null}
+          region={decision.analysis?.zone ?? null}
+          direction={decision.direction}
+          evaluatedAt={decision.evaluatedAt}
+          hasClosedCandles={chartCandles.length > 0}
+          feedState={currentFeedState}
+          lastClosedCandleEpoch={lastClosedCandleEpoch}
+        />
+
+        <div className="mobile-risk-indicator" role="note">
+          Risk management disabled in Phase 1. No orders are placed.
+        </div>
+
         {/* 2. SYMBOL WATCHLIST (LEFT) */}
         <Watchlist
           selectedSymbolId={selectedSymbol.id}
@@ -768,6 +788,7 @@ export default function DashboardPage() {
           lastPrice={currentPrice}
           swings={decision.analysis?.marketStructure?.swings ?? []}
           breaks={decision.analysis?.marketStructure?.breaks ?? []}
+          isActive={mobileTab === 'chart'}
         />
 
         {/* RIGHT COLUMN: SMC ANALYSIS & MARKET STRUCTURE */}
@@ -823,7 +844,6 @@ export default function DashboardPage() {
       <MobileBottomNav
         activeTab={mobileTab}
         onTabChange={setMobileTab}
-        unreadNotifications={notifications.length}
         hasActiveSignal={decision.signal?.decision === 'LONG' || decision.signal?.decision === 'SHORT'}
       />
 

@@ -45,7 +45,7 @@ export function Watchlist({
         </div>
       </div>
 
-      <div className="panel-body" style={{ padding: '6px' }}>
+      <div className="panel-body watchlist-body">
         <div className="watchlist-items">
           {SUPPORTED_SYMBOLS.map((s) => {
             const isSelected = s.id === selectedSymbolId;

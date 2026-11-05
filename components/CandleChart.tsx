@@ -35,6 +35,7 @@ interface CandleChartProps {
   lastPrice?: number | null;
   swings?: SwingPoint[];
   breaks?: StructureBreak[];
+  isActive?: boolean;
 }
 
 export function CandleChart({
@@ -47,6 +48,7 @@ export function CandleChart({
   lastPrice,
   swings = [],
   breaks = [],
+  isActive = true,
 }: CandleChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -163,6 +165,16 @@ export function CandleChart({
       window.removeEventListener('resize', onResize);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      setResizeCount((count) => count + 1);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [isActive]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

@@ -4,7 +4,7 @@ import React from 'react';
 
 export function RiskPanel() {
   return (
-    <div className="panel">
+    <div className="panel risk-panel">
       <div className="panel-header">
         <div className="panel-title">
           <svg

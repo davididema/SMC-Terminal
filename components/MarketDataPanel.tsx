@@ -45,7 +45,7 @@ export function MarketDataPanel({
   };
 
   return (
-    <div className="panel">
+    <div className="panel market-data-panel">
       <div className="panel-header">
         <div className="panel-title">
           <svg
