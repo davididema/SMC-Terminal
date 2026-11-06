@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { buildNotificationView } from '@/lib/ui/notification-view';
 import { getSymbolConfig } from '@/lib/deriv/symbols';
 import type { GeneratedSignalEvent } from '@/lib/notifications/types';
@@ -55,13 +55,20 @@ export function NotificationCenter({
   const desktopActive = isDesktopDeliveryActive(desktopPreferenceEnabled, desktopState);
 
   // Close notification interface on Escape key press when open
+  const onCloseRef = useRef(onClose);
+  const hasOnClose = Boolean(onClose);
+
   useEffect(() => {
-    if (!isOpen || !onClose) return;
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!isOpen || !hasOnClose) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Esc') {
         e.preventDefault();
-        onClose();
+        onCloseRef.current?.();
       }
     };
 
@@ -69,7 +76,7 @@ export function NotificationCenter({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, hasOnClose]);
 
   return (
     <>
