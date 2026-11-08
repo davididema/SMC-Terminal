@@ -765,10 +765,6 @@ export default function DashboardPage() {
           lastClosedCandleEpoch={lastClosedCandleEpoch}
         />
 
-        <div className="mobile-risk-indicator" role="note">
-          Risk management disabled in Phase 1. No orders are placed.
-        </div>
-
         {/* 2. SYMBOL WATCHLIST (LEFT) */}
         <Watchlist
           selectedSymbolId={selectedSymbol.id}
@@ -832,8 +828,15 @@ export default function DashboardPage() {
             selectedSymbolId={selectedSymbol.id}
           />
 
-          {/* 9. RISK PANEL (FUTURE READY / SAFEGUARDED) */}
-          <RiskPanel />
+          {/* 9. RISK PANEL (READ-ONLY CALCULATOR) */}
+          <RiskPanel
+            signal={decision.signal}
+            lastGeneratedSignal={lastGeneratedSignal}
+            symbolId={selectedSymbol.id}
+            displayName={selectedSymbol.displayName}
+            timeframe={timeframe}
+            currentPrice={currentPrice}
+          />
         </div>
 
         {/* 8. LIVE EVENT LOG (FULL WIDTH BOTTOM) */}
